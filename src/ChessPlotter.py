@@ -33,6 +33,10 @@ def update_view_counts(method):
 
 class ChessPlotter:
 
+    """
+    Controller for ChessPlotter
+    """
+
     def __init__(self, view: ChessPlotterView):
         self.model: ChessPlotterModel = ChessPlotterModel(plotter=ChessPlots())
         self.view:  ChessPlotterView  = view
@@ -40,9 +44,12 @@ class ChessPlotter:
         # Make signal -> slot connections
         self.make_connections()
         
-        # Populate the username and plot list
-        self.update_username_list()
+        # Update plot list
         self.update_plot_list()
+
+        # Populate the username list
+        self.username_selection_setup()
+        # self.update_username_list()
     
     def make_connections(self):
         """Make connections from view to model"""
@@ -68,7 +75,7 @@ class ChessPlotter:
 
         # Link user add button
         self.view.adduser.username_add.clicked.connect(self.add_user)
-
+    
     @update_view_counts
     def change_to_username(self, idx):
         """Call model setter for username"""
@@ -93,9 +100,25 @@ class ChessPlotter:
     def change_to_number_select(self):
         """Call model setter for number selection"""
         return self.model.set_number_items(self.view.number_select.text())
+    
+    def username_selection_setup(self):
+        """Initialize the model for reading parquet files, if no parquet files to read then the Add User window is opened."""
+
+        usernames = self.model.init_usernames()
+        # If there are available parquet files then populate combobox, otherwise let user input a username
+        if len(usernames):
+            self.view.username_input.clear()
+            self.view.username_input.addItems(self.model.username_list)
+        else:
+            # Show add-user window
+            self.view.adduser.exec()
+            if self.model.username_list is None:
+                print("Exiting as no user was added.")
+                sys.exit()
 
     def update_username_list(self):
         """Refresh the username combobox with the usernames listed in the model"""
+        # This should request the reading of the parquet files and assigning of username
         self.view.username_input.clear()
         self.view.username_input.addItems(self.model.username_list)
     
@@ -138,8 +161,6 @@ class ChessPlotter:
         """Call to model to check the current username entered, print out response"""
         # Check the username
         self.view.adduser.username_data.setText(self.model.check_username(username=self.view.adduser.username_input.text()))
-        
-        # TODO: Potentially make the Add button appear and disappear
 
     def add_user(self):
         """Upon clicking of 'Add' button in popup, attempt to download pgn files, process files, and create parquet file."""
@@ -165,7 +186,7 @@ class ChessPlotter:
         self.view.adduser.username_data.setText("Data is ready.")
 
         # Update the username select combobox
-        self.model.update_username_list()
+        self.model.init_usernames()
         self.update_username_list()
 
 
