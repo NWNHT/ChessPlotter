@@ -207,8 +207,6 @@ class FileSaveDialog(QDialog):
         # print(self.file_save_window.getSaveFileName())
         print(selected_filepath)
         return selected_filepath
-
-
         
 
 if __name__ == "__main__":

@@ -40,9 +40,12 @@ class ChessPlotter:
         # Make signal -> slot connections
         self.make_connections()
         
-        # Populate the username and plot list
-        self.update_username_list()
+        # Update plot list
         self.update_plot_list()
+
+        # Populate the username list
+        self.username_selection_setup()
+        # self.update_username_list()
     
     def make_connections(self):
         """Make connections from view to model"""
@@ -68,7 +71,7 @@ class ChessPlotter:
 
         # Link user add button
         self.view.adduser.username_add.clicked.connect(self.add_user)
-
+    
     @update_view_counts
     def change_to_username(self, idx):
         """Call model setter for username"""
@@ -93,9 +96,26 @@ class ChessPlotter:
     def change_to_number_select(self):
         """Call model setter for number selection"""
         return self.model.set_number_items(self.view.number_select.text())
+    
+    def username_selection_setup(self):
+        # Call initialize username list from model
+        # If there is a non-zero list then just continue
+        # If there is a zero list then open up the add-user window
+        usernames = self.model.init_usernames()
+        if len(usernames):
+            self.view.username_input.clear()
+            self.view.username_input.addItems(self.model.username_list)
+        else:
+            # Show add-user window
+            self.view.adduser.exec()
+            if self.model.username_list is None:
+                print("Exiting as no user was added.")
+                sys.exit()
+
 
     def update_username_list(self):
         """Refresh the username combobox with the usernames listed in the model"""
+        # This should request the reading of the parquet files and assigning of username
         self.view.username_input.clear()
         self.view.username_input.addItems(self.model.username_list)
     
@@ -165,7 +185,7 @@ class ChessPlotter:
         self.view.adduser.username_data.setText("Data is ready.")
 
         # Update the username select combobox
-        self.model.update_username_list()
+        self.model.init_usernames()
         self.update_username_list()
 
 

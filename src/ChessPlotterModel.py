@@ -27,28 +27,53 @@ class ChessPlotterModel:
         self.filepath = filepath
 
         # Set up some default and given values
-        self.username_list = self.get_parquet_list()
-        self.username: str = self.username_list[0]
         self.colour: tuple[bool, str] = (True, "")
         self.remove: List[str] = []
         self.opening: List[str] = []
         self.number_items: int = 6
         self.valid_usernames = set() 
 
-        # Data holds the dataframe of the current user, plot holds the plot
-        self.data: Optional[pd.DataFrame] = get_parquet_by_username(self.username)
-        self.filtered_data: Optional[pd.DataFrame] = self.data
-        self.apply_filters()
+        # Usernames hold usernames, data holds the dataframe of the current user, plot holds the plot
+        self.username_list: Optional[List] = None
+        self.username: Optional[str] = None
+        self.data: Optional[pd.DataFrame] = None
+        self.filtered_data: Optional[pd.DataFrame] = None
 
         # Game counting
-        self.data_count: int = len(self.data)
-        self.filtered_data_count: int = len(self.filtered_data)
+        self.data_count: Optional[int] = None
+        self.filtered_data_count: Optional[int] = None
 
         # Set up plotting
         self.plotter = plotter
         self.plot: Optional[gg.ggplot] = None # Potentially set up spash screen?
         self.figure: Optional[Figure] = None
     
+    def init_usernames(self) -> List:
+        """Try to read parquet files, if nothing then do nothing, return nothing"""
+        # If there are parquet files, initialize username list, username, data, filtered data, and counts
+        if len([file for file in os.listdir(self.filepath) if file.endswith('.parquet')]):
+            available_usernames = sorted([file[:-8] for file in os.listdir(self.filepath) if file.endswith('.parquet')])
+            self.username_list = available_usernames
+            self.username = self.username_list[0]
+            self.data = get_parquet_by_username(self.username)
+            self.filtered_data = self.data
+            self.apply_filters()
+            self.data_count = len(self.data)
+            self.filtered_data_count = len(self.filtered_data)
+            return available_usernames
+        else: # Else return an empty list
+            return []
+
+    def get_parquet_list(self) -> List:
+        """Update usernames list with available parquet files"""
+        # TODO: Add some handling for condition where there are no parquet files, might fail on opening
+        lst = sorted([file[:-8] for file in os.listdir(self.filepath) if file.endswith('.parquet')])
+        return lst
+    
+    def update_username_list(self) -> None:
+        """Update the username list because the format of the function above doesn't facilitate this"""
+        self.username_list = self.get_parquet_list()
+
     def set_plot(self, combo_input):
         """On pushing of generate plot button, update the plot with a call to the plotter"""
         # Get the new plot, save and convert to figure
@@ -66,16 +91,6 @@ class ChessPlotterModel:
     def get_plot_list(self):
         """Update plot list with available plots"""
         return self.plotter.plots.keys()
-    
-    def get_parquet_list(self) -> List:
-        """Update usernames list with available parquet files"""
-        # TODO: Add some handling for condition where there are no parquet files, might fail on opening
-        lst = sorted([file[:-8] for file in os.listdir(self.filepath) if file.endswith('.parquet')])
-        return lst
-    
-    def update_username_list(self) -> None:
-        """Update the username list because the format of the function above doesn't facilitate this"""
-        self.username_list = self.get_parquet_list()
     
     @update_game_count
     def set_username(self, idx):
