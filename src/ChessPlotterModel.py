@@ -193,11 +193,20 @@ class ChessPlotterModel:
             logging.warning(f"Error constructing parquet for {username}")
             return False
     
-    def save_figure(self):
+    def save_figure(self, selected_filename):
+        """Given filename selected in view QFileDialog, save figure as png"""
         save_filepath = self.filepath + "../plots/"
         filename = save_filepath + self.username + "---" + datetime.now().isoformat() + ".png"
-        self.plot.save(filename=filename, format="png", width=20, height=10)
-        logging.warning("Plot saved.")
+        try:
+            self.plot.save(filename=selected_filename, format="png", width=20, height=10)
+            logging.warning("Plot saved with selected filename.")
+        except:
+            try:
+                self.plot.save(filename=filename, format="png", width=20, height=10)
+                logging.warning("Plot saved with default filename.")
+            except:
+                logging.warning("Plot not saved, error saving.")
+
 
 
 if __name__ == "__main__":

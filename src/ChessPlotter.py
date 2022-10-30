@@ -127,7 +127,12 @@ class ChessPlotter:
         self.view.adduser.exec()
     
     def save_figure(self):
-        self.model.save_figure()
+        """Save figure when button is pushed"""
+        selected_file = self.view.file_save.window_open()
+        if len(selected_file):
+            self.model.save_figure(selected_filename=selected_file)
+        else:
+            logging.warning("No file selectd/entered, no file saved.")
 
     def check_user(self):
         """Call to model to check the current username entered, print out response"""

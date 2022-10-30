@@ -1,4 +1,5 @@
 
+from pathlib import Path
 import sys
 
 import matplotlib
@@ -19,6 +20,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QComboBox,
+    QFileDialog,
 )
 
 from chessproc.ChessPlotterColourScheme import ChessPlotterColourScheme as cpcs
@@ -35,6 +37,7 @@ GAMES_WIDTH = 150
 COMBO_HEIGHT = 30
 COMBO_WIDTH = 250
 
+plot_filepath = str(Path(__file__).parent.parent) + "/plots/"
 
 class ChessPlotterView(QMainWindow):
 
@@ -65,6 +68,9 @@ class ChessPlotterView(QMainWindow):
 
         # Set up the add user dialog
         self.adduser = AddUserPopUp(self)
+
+        # Set up the filesave dialog
+        self.file_save = FileSaveDialog(self)
 
         # Show all the widgets
         self.show()
@@ -184,6 +190,25 @@ class AddUserPopUp(QDialog):
         self.add_layout.addWidget(self.username_data)
         self.add_layout.addWidget(self.username_add)
         self.setLayout(self.popup_layout)
+    
+class FileSaveDialog(QDialog):
+
+    def __init__(self, parent) -> None:
+        super().__init__(parent=parent)
+
+        self.file_save_window = QFileDialog()
+        self.file_save_window.setFileMode(QFileDialog.FileMode.AnyFile)
+        self.file_save_window.setAcceptMode(QFileDialog.AcceptMode.AcceptSave)
+        self.file_save_window.setDirectory(plot_filepath)
+        self.file_save_window.setDefaultSuffix(".png")
+    
+    def window_open(self) -> str:
+        selected_filepath, _ = self.file_save_window.getSaveFileName()
+        # print(self.file_save_window.getSaveFileName())
+        print(selected_filepath)
+        return selected_filepath
+
+
         
 
 if __name__ == "__main__":
