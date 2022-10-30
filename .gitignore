@@ -1,7 +1,9 @@
 
+.DS_Store
+
 plots/*
 !plots/.gitkeep
 
 pgns/*
-!stream_cache/.gitkeep
+!pgns/.gitkeep
 
