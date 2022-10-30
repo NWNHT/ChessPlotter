@@ -33,6 +33,10 @@ def update_view_counts(method):
 
 class ChessPlotter:
 
+    """
+    Controller for ChessPlotter
+    """
+
     def __init__(self, view: ChessPlotterView):
         self.model: ChessPlotterModel = ChessPlotterModel(plotter=ChessPlots())
         self.view:  ChessPlotterView  = view
@@ -98,10 +102,10 @@ class ChessPlotter:
         return self.model.set_number_items(self.view.number_select.text())
     
     def username_selection_setup(self):
-        # Call initialize username list from model
-        # If there is a non-zero list then just continue
-        # If there is a zero list then open up the add-user window
+        """Initialize the model for reading parquet files, if no parquet files to read then the Add User window is opened."""
+
         usernames = self.model.init_usernames()
+        # If there are available parquet files then populate combobox, otherwise let user input a username
         if len(usernames):
             self.view.username_input.clear()
             self.view.username_input.addItems(self.model.username_list)
@@ -111,7 +115,6 @@ class ChessPlotter:
             if self.model.username_list is None:
                 print("Exiting as no user was added.")
                 sys.exit()
-
 
     def update_username_list(self):
         """Refresh the username combobox with the usernames listed in the model"""
@@ -158,8 +161,6 @@ class ChessPlotter:
         """Call to model to check the current username entered, print out response"""
         # Check the username
         self.view.adduser.username_data.setText(self.model.check_username(username=self.view.adduser.username_input.text()))
-        
-        # TODO: Potentially make the Add button appear and disappear
 
     def add_user(self):
         """Upon clicking of 'Add' button in popup, attempt to download pgn files, process files, and create parquet file."""

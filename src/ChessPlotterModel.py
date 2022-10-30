@@ -23,6 +23,10 @@ def update_game_count(method):
 
 class ChessPlotterModel:
 
+    """
+    Model for ChessPlotter
+    """
+
     def __init__(self, plotter, filepath: str = "/Users/lucasnieuwenhout/Documents/Programming/Python/Projects/ChessPlotter/pgns/"):
         self.filepath = filepath
 
@@ -63,16 +67,6 @@ class ChessPlotterModel:
             return available_usernames
         else: # Else return an empty list
             return []
-
-    def get_parquet_list(self) -> List:
-        """Update usernames list with available parquet files"""
-        # TODO: Add some handling for condition where there are no parquet files, might fail on opening
-        lst = sorted([file[:-8] for file in os.listdir(self.filepath) if file.endswith('.parquet')])
-        return lst
-    
-    def update_username_list(self) -> None:
-        """Update the username list because the format of the function above doesn't facilitate this"""
-        self.username_list = self.get_parquet_list()
 
     def set_plot(self, combo_input):
         """On pushing of generate plot button, update the plot with a call to the plotter"""
