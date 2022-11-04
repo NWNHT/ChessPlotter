@@ -98,6 +98,15 @@ def get_dates_not_downloaded(responses: Dict[str, Dict[str, List[str]]], pgn_dir
     return responses
 
 
+def get_specified_dates(responses: Dict[str, Dict[str, List[str]]], months: List[str], pgn_directory: str = global_pgn_directory) -> Dict[str, Dict[str, List[str]]]:
+    """Filter for only requested months in format List['yyyy-mm']"""
+    for username, response in responses.items():
+        # Create an intersection of the available dates and the provided dates/months, then add the latest month
+        responses[username]["Dates"] = list(set(response["Dates"]).intersection(set(months)).union(set([response["Dates"][-1]])))
+    
+    return responses
+
+
 def create_archive_requests(requests: Dict[str, Dict[str, List[str]]]) -> Dict[str, Dict]:
     """Take the list of dates and return the dictionary with an additional list of coroutines matching the dates"""
     for username, response in requests.items():
@@ -145,6 +154,14 @@ def download_by_username_list_better(usernames: List[str]) -> None:
     alt_make_queries(coro=coro)
 
 
+def download_by_username_list_and_month_list_better(usernames: List[str], months: List[str]) -> None:
+    """Given list of usernames and months will download and save to file async"""
+    
+    response = get_player_months(usernames)
+    response = get_specified_dates(response, months)
+    coro = make_player_games_by_month_coro(requests=response)
+    alt_make_queries(coro=coro)
+
 # The functions below are used to go from pgn to a dataframe, optionally saved as a parquet file, then the data can be read from the files
 
 
@@ -152,7 +169,7 @@ def pgn_to_gamelist(pgn: str) -> list:
     """Take a pgn string and return a list containing a list of dictionaries containing the game information."""
     # Compile re expressions to detect header information and individual moves
     header = re.compile(r'\[(.*?) \"(.*?)\"\]')
-    moves = re.compile(r'([0-9]*[.]+) ([a-zA-Z0-9+#=/]*) \{\[%clk ([0-9:.]*)\]\}')
+    moves = re.compile(r'([0-9]*[.]+) ([a-zA-Z0-9+#=/-]*) \{\[%clk ([0-9:.]*)\]\}')
 
     # Split pgn into games and prep loop
     raw_game_list = pgn.split('\n\n\n')
