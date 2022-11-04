@@ -16,17 +16,13 @@ if __name__ == '__main__':
 		       .iloc[3])
 
 	# Create gameanalysis object
-	g = GameAnalysis(pgn=duda.pgn, verbose=True, check_cache=False)
+	g = GameAnalysis(sf=sf, pgn=duda.pgn, verbose=True)
 	print("created object")
 
 
 	print("Starting Analysis")
 	print(g.analysis)
 	print("Ending Analysis")
-
-	print("Starting Save")
-	g.save_analysis()
-	print("File Saved")
 
 
 	print(time.perf_counter() - start)
