@@ -47,12 +47,12 @@ Plots can be generated with the following flow:
 This process can be repeated beginning at any step or additional chess.com player data can be downloaded and processed using the 'Add' button to open the _Add User_ window.  The application can be closed using the window close button.
 
 #### Interface
-[Interface](docs/sample_plots/elo_difference_density)
+[Interface](docs/sample_plots/elo_difference_density.png)
 
-[Add User Window](docs/sample_plots/add_user_view)
+[Add User Window](docs/sample_plots/add_user_view.png)
 
 #### Example Plots
 Below are a couple images of sample plots, more are available in the docs/sample_plots directory.
 
-[ELO Difference Density](docs/sample_plots/elo_difference_density)
+[ELO Difference Density](docs/sample_plots/elo_difference_density.png)
 
