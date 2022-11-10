@@ -17,6 +17,7 @@ global_pgn_directory = str(Path(__file__).parent.parent.parent) + "/pgns/"
 
 Client.rate_limit_handler.retries = 4
 Client.rate_limit_handler.tts = 2
+tts_divisor = 6
 
 # These functions are used in order to request pgn files from chess.com for a given list of usernames
 
@@ -27,13 +28,13 @@ async def gather_cors(cors: List[Coroutine]):
     return responses
 
 
-async def save_player_games_by_month(username: str, year: str, month: str, pgn_directory: str = global_pgn_directory) -> None:
+async def save_player_games_by_month(username: str, year: str, month: str, pgn_directory: str = global_pgn_directory, tts=0) -> None:
     """Wrapper for get_player_games_by_month_pgn that saves the pgns directly to an appropriate directory.  It is assumed that the username directory exists."""
     filepath = f"{pgn_directory}{username}/{year}-{month}.txt"
     # This is an exceptionally bad handling of the possibility of a 429 error from chess.com, has worked so far though
     try:
         print(f"Start file {year}-{month} for {username}.")
-        data = await get_player_games_by_month_pgn(username=username, year=year, month=month)
+        data = await get_player_games_by_month_pgn(username=username, year=year, month=month, tts=tts)
     except ChessDotComError:
         print(f"Failure on {year}-{month} for {username}.  Trying again.")
         data = await get_player_games_by_month_pgn(username=username, year=year, month=month)
@@ -48,7 +49,7 @@ def make_player_games_by_month_coro(requests: Dict[str, Dict]) -> List[Coroutine
     """Given requests dictionary, make coroutines for all dates"""
     cors = []
     for username, response in requests.items():
-        cors.extend([save_player_games_by_month(username, response["Dates"][i][:4], response["Dates"][i][-2:]) for i in range(len(response["Dates"]))])
+        cors.extend([save_player_games_by_month(username, response["Dates"][i][:4], response["Dates"][i][-2:], tts=i/tts_divisor) for i in range(len(response["Dates"]))])
         make_directory(username=username, pgn_directory=global_pgn_directory)
     
     return cors
