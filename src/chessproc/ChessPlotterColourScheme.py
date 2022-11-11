@@ -25,8 +25,8 @@ class ChessPlotterColourScheme:
     title_size = 20
     axis_size = 16
     legend_title_size = 14
-    legend_text_size = 8
-    label_size = 10
+    legend_text_size = 12
+    label_size = 12
 
     # Legend Position
     legend_position = (0.8, 0.90)

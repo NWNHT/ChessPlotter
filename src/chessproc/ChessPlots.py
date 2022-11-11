@@ -139,7 +139,7 @@ class ChessPlots:
                     + gg.scale_fill_manual(values=["white", "gray", "black"], name="Result", labels=("White", "Draw", "Black"))
                     + gg.coord_flip()
 
-                    + gg.ggtitle(f'Opening Results for {self.username}{f"playing {self.colour}" if len(self.colour) > 0 else ""}')
+                    + gg.ggtitle(f'Opening Results for {self.username} {f"playing {self.colour}" if len(self.colour) > 0 else ""}')
                     + gg.xlab("Opening [ECO]")
                     + gg.ylab(xlab)
 
