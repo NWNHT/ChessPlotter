@@ -32,7 +32,9 @@ class ChessPlotterModel:
 
         # Set up some default and given values
         self.colour: tuple[bool, str] = (True, "")
-        self.remove: List[str] = []
+        self.opponents_is_whitelist = False
+        self.opponents: List[str] = []
+        self.opening_is_whitelist = True
         self.opening: List[str] = []
         self.number_items: int = 6
         self.valid_usernames = set() 
@@ -74,7 +76,7 @@ class ChessPlotterModel:
         # self.plot = self.plotter(combo_input, self.filtered_data, self.username, self.colour, self.remove, self.opening, self.number_items)
         # self.figure = self.plot.draw()
         try:
-            self.plot = self.plotter(combo_input, self.filtered_data, self.username, self.colour, self.remove, self.opening, self.number_items)
+            self.plot = self.plotter(combo_input, self.filtered_data, self.username, self.colour, self.opponents, self.opening, self.number_items)
             self.figure = self.plot.draw()
         except:
             logging.warning("Error generating plot, error plot shown.")
@@ -108,9 +110,21 @@ class ChessPlotterModel:
         logging.warning(f"Colour updated to {self.colour} with index {idx}.")
 
     @update_game_count
-    def set_remove(self, line_input):
-        self.remove = line_input.split(' ')
-        logging.warning(f"Remove updated to {self.remove} with input {line_input}.")
+    def set_opponents_is_whitelist(self, input):
+        logging.warning(f"Opponent input index is: {input}")
+        self.opponents_is_whitelist = input == 0
+        logging.warning(f"Opponent whitelist is: {self.opponents_is_whitelist}")
+
+    @update_game_count
+    def set_opponents(self, line_input):
+        self.opponents = line_input.split(' ')
+        logging.warning(f"Remove updated to {self.opponents} with input {line_input}.")
+
+    @update_game_count
+    def set_opening_is_whitelist(self, input):
+        logging.warning(f"Opening input index is: {input}")
+        self.opening_is_whitelist = input == 0
+        logging.warning(f"Opening whitelist is: {self.opening_is_whitelist}")
 
     @update_game_count
     def set_opening(self, line_input):
@@ -138,15 +152,25 @@ class ChessPlotterModel:
             self.filtered_data = self.data.query('player_colour == @self.colour[1]')
         else:
             self.filtered_data = self.data
+
         logging.warning(f"After colour: {len(self.filtered_data)}")
 
-        # Remove any opponents
-        self.filtered_data = remove_opponent(self.filtered_data, *self.remove)
-        logging.warning(f"After remove: {len(self.filtered_data)}")
+        # Select by username white/blacklist
+        if (len(self.opponents) > 0 and len(self.opponents[0]) > 0):
+            if self.opponents_is_whitelist:
+                self.filtered_data = self.filtered_data.query("(White in @self.opponents) | (Black in @self.opponents)")
+            else:
+                self.filtered_data = self.filtered_data.query("White not in @self.opponents & Black not in @self.opponents")
 
-        # Select by opening ECO
-        if len(self.opening) > 0 and len(self.opening[0]) > 0:
-            self.filtered_data = self.filtered_data.query('ECO in @self.opening')
+        logging.warning(f"After opponents: {len(self.filtered_data)}")
+
+        # Select by ECO white/blacklist
+        if (len(self.opening) > 0 and len(self.opening[0]) > 0):
+            if self.opening_is_whitelist:
+                self.filtered_data = self.filtered_data.query('ECO in @self.opening')
+            else:
+                self.filtered_data = self.filtered_data.query('ECO not in @self.opening')
+
         logging.warning(f"After opening: {len(self.filtered_data)}")
 
         # TODO: Add filter for number of items, could require more thought
