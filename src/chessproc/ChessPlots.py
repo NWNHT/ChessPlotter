@@ -48,6 +48,31 @@ class ChessPlots:
         self.number_items = number_items
 
         return self.plots[plot_selection](self, game_data)
+    
+    def error_plot(self):
+        """This plot is just used as a replacement image if there is an error generating the plot."""
+        data = pd.DataFrame({"x": [0], "y": [0], "label": ["Error Generating plot, likely insufficient data.\nPlease adjust and try again."]})
+        return (gg.ggplot(data, gg.aes(x='x', y='y', label='label')) 
+                    + gg.geom_label()
+
+                    + gg.ggtitle("")
+                    + gg.xlab("")
+                    + gg.ylab("")
+
+                    + gg.scale_x_continuous(limits=cpcs.elo_limits, expand=(0,0))
+
+                    + gg.theme(text=gg.element_text(colour=cpcs.text, size=cpcs.label_size))
+                    + gg.theme(plot_title=gg.element_text(size=cpcs.title_size, ha='left'))
+                    + gg.theme(axis_title=gg.element_text(size=cpcs.axis_size))
+                    + gg.theme(axis_text=blank)
+                    + gg.theme(axis_title_y=blank)
+                    + gg.theme(panel_grid_major_x=gg.element_line(colour=cpcs.axis))
+                    + gg.theme(figure_size=cpcs.figure_size)
+                    + gg.theme(legend_position=cpcs.legend_position, legend_title=gg.element_text(size=cpcs.legend_title_size), legend_text=gg.element_text(size=cpcs.legend_text_size))
+
+                    + pe.background_colour(colour=cpcs.background)
+                    + pe.remove_grid(minor=True, y_major=True)
+                    + pe.remove_ticks(major=True, minor=True))
 
     def _elo_difference_density(self, game_data: pd.DataFrame) -> gg.ggplot:
         """Plot density of elo difference, coloured by result"""

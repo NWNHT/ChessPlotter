@@ -77,7 +77,9 @@ class ChessPlotterModel:
             self.plot = self.plotter(combo_input, self.filtered_data, self.username, self.colour, self.remove, self.opening, self.number_items)
             self.figure = self.plot.draw()
         except:
-            logging.warning("Error generating plot, plot not updated.")
+            logging.warning("Error generating plot, error plot shown.")
+            self.plot = self.plotter.error_plot()
+            self.figure = self.plot.draw()
 
         # return the figure to the controller for display to the view
         return self.figure
