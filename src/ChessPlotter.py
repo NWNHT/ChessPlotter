@@ -49,7 +49,10 @@ class ChessPlotter:
 
         # Populate the username list
         self.username_selection_setup()
-        # self.update_username_list()
+
+        # Generate the first plot, will error if there is no data
+        self.change_plot()
+
     
     def make_connections(self):
         """Make connections from view to model"""
@@ -110,6 +113,8 @@ class ChessPlotter:
             self.view.username_input.clear()
             self.view.username_input.addItems(self.model.username_list)
         else:
+            # Throw up the insufficient data error plot
+            self.change_plot()
             # Show add-user window
             self.view.adduser.exec()
             if self.model.username_list is None:

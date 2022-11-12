@@ -153,8 +153,10 @@ class ChessPlotterView(QMainWindow):
     def add_canvas(self, fig = None):
         # Make placeholder figure
         if fig is None:
-            data = pd.DataFrame({"points": np.random.random(10)})
-            fig = (gg.ggplot(data, gg.aes(x="data.index", y="points")) + gg.geom_point()).draw()
+            data = pd.DataFrame({"x": [0], "y": [0], "label": ["View received None"]})
+            fig = (gg.ggplot(data, gg.aes(x='x', y='y', label='label')) + gg.geom_label()).draw()
+            # data = pd.DataFrame({"points": np.random.random(10)})
+            # fig = (gg.ggplot(data, gg.aes(x="data.index", y="points")) + gg.geom_point()).draw()
 
         # Add to layout
         self.canvas = FigureCanvasQTAgg(fig)
