@@ -8,6 +8,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import numpy as np
 import pandas as pd
 import plotnine as gg
+import PyQt6.QtCore as Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
@@ -112,9 +113,17 @@ class ChessPlotterView(QMainWindow):
         self.player_colour_select = QComboBox()
         self.player_colour_select.addItems(["White and Black", "White", "Black"])
         self.player_colour_select.setFixedSize(GAMES_WIDTH, BUTTON_HEIGHT)
-        self.remove_opponents = QLineEdit()
-        self.remove_opponents.setFixedSize(GAMES_WIDTH, BUTTON_HEIGHT)
+        self.opponents_combo = QComboBox()
+        self.opponents_combo.setFixedSize(GAMES_WIDTH + 20, BUTTON_HEIGHT)
+        self.opponents_combo.addItems(["Opponent Whitelist", "Opponent Blacklist"])
+        self.opponents_combo.setCurrentIndex(1)
+        self.opponents = QLineEdit()
+        self.opponents.setFixedSize(GAMES_WIDTH, BUTTON_HEIGHT)
         # self.remove_opponents.setPlaceholderText("MagnusCarlsen FabianoCaruana ...")
+        self.opening_select_combo = QComboBox()
+        self.opening_select_combo.setFixedSize(GAMES_WIDTH + 20, BUTTON_HEIGHT)
+        self.opening_select_combo.addItems(["Opening Whitelist", "Opening Blacklist"])
+        self.opening_select_combo.setCurrentIndex(0)
         self.opening_select = QLineEdit()
         self.opening_select.setFixedSize(GAMES_WIDTH, BUTTON_HEIGHT)
         # self.opening_select.setPlaceholderText("B10 D00 ...")
@@ -123,8 +132,8 @@ class ChessPlotterView(QMainWindow):
 
         # Add controls to layout
         self.plot_inputs_layout.addRow("Colour:", self.player_colour_select)
-        self.plot_inputs_layout.addRow("Opponents to remove:", self.remove_opponents)
-        self.plot_inputs_layout.addRow("Openings", self.opening_select)
+        self.plot_inputs_layout.addRow(self.opponents_combo, self.opponents)
+        self.plot_inputs_layout.addRow(self.opening_select_combo, self.opening_select)
         self.plot_inputs_layout.addRow("Number of Items:", self.number_select)
 
     def add_plot_select(self):

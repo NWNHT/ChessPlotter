@@ -63,7 +63,9 @@ class ChessPlotter:
 
         # Link game filter controls
         self.view.player_colour_select.currentIndexChanged.connect(self.change_to_colour)
-        self.view.remove_opponents.editingFinished.connect(self.change_to_remove_opponent)
+        self.view.opponents_combo.currentIndexChanged.connect(self.change_to_opponent_combo)
+        self.view.opponents.editingFinished.connect(self.change_to_opponent)
+        self.view.opening_select_combo.currentIndexChanged.connect(self.change_to_opening_combo)
         self.view.opening_select.editingFinished.connect(self.change_to_opening_select)
         self.view.number_select.editingFinished.connect(self.change_to_number_select)
 
@@ -90,10 +92,20 @@ class ChessPlotter:
         return self.model.set_colour(idx)
 
     @update_view_counts
-    def change_to_remove_opponent(self):
+    def change_to_opponent_combo(self, idx):
+        """Call model setter for number selection"""
+        return self.model.set_opponents_is_whitelist(idx)
+
+    @update_view_counts
+    def change_to_opponent(self):
         """Call model setter for remove opponents"""
-        return self.model.set_remove(self.view.remove_opponents.text())
+        return self.model.set_opponents(self.view.opponents.text())
     
+    @update_view_counts
+    def change_to_opening_combo(self, idx):
+        """Call model setter for number selection"""
+        return self.model.set_opening_is_whitelist(idx)
+
     @update_view_counts
     def change_to_opening_select(self):
         """Call model setter for opening selection"""
