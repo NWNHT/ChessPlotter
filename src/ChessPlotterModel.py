@@ -10,7 +10,6 @@ import pandas as pd
 import plotnine as gg
 
 from chessproc.pgnproc import construct_parquet_by_username, get_parquet_by_username, download_by_username_list_better, get_player_game_count
-from chessproc.dfproc import remove_opponent
 
 def update_game_count(method):
     """Decorator for all ChessPlot methods that update the data filters, applies filters and updates counts"""
