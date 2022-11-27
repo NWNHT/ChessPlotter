@@ -44,10 +44,12 @@ print(first_move.san())
 print(first_move.clock())
 print(first_move.board().fen())
 
-# sf.set_depth(10)
+sf.set_depth(10)
 # sf.set_fen_position('4r1k1/5ppp/1p1b1p2/4q3/1P6/7P/2Q2PP1/3R2K1 w - - 3 26') # Black advantage
+sf.set_fen_position('3r4/7n/5k2/5pp1/3P1K2/3BPPP1/7P/8 w - - 0 46') # black mate
 # sf.set_fen_position('4r1k1/5ppp/1pQb1p2/4q3/1P6/7P/5PP1/3R2K1 b - - 4') # Black mate in 2
+# sf.set_fen_position('r1bqk1nr/pppp1Qpp/2n5/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4') # white mate
 
-# print(sf.get_top_moves(5))
+print(sf.get_top_moves(5))
 # print('\n\n')
-# print(sf.get_evaluation())
+print(sf.get_evaluation())
