@@ -4,7 +4,7 @@ A Python app to request Chess.com game data and generate plots.
 # Installation
 ### Creating conda environment:
 ```
-conda create -n env_chess_testing python=3.9.12
+conda create -n env_chess_plotter python=3.9.12
 ```
 
 ### Installing packages:
